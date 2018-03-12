@@ -19,7 +19,7 @@ class ViewController: UIViewController {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-       self.handle = SearchController.showSearchControllerFromController(fromController: self, hotKeywordsArray: ["帅锅","美眉"], historyKeywordsArray: ["TFBoys","TFS"], type: .partThree, jumpType: .push) { [unowned self] (selectedType, selectedRowIndex, resultString) in
+       self.handle = SearchController.showSearchControllerFromController(fromController: self, hotKeywordsArray: ["帅锅","美眉"], historyKeywordsArray: ["TFBoys","TFS"], type: .partTwo, jumpType: .push) { [unowned self] (selectedType, selectedRowIndex, resultString) in
             print("\(selectedType),\(selectedRowIndex),\(resultString)")
             
             if selectedType == .search {

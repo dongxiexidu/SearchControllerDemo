@@ -42,8 +42,8 @@ typealias SearchSetNewArrayHandle = ([String])->()
 
 typealias HeightCallBack = (CGFloat)->Void
 
-
-let kNavigationHeihgt : CGFloat = 64
+let isIphoneX : Bool = kScreenHeight == 812.0 ? true : false
+let kNavigationHeihgt : CGFloat = isIphoneX ? 88 : 64
 let kScreenWidth : CGFloat = UIScreen.main.bounds.size.width
 let kScreenHeight : CGFloat = UIScreen.main.bounds.size.height
 
@@ -222,7 +222,7 @@ extension SearchController {
     }
     
     
-    func creatKeywordCubCellWithArray(keywordArray: [String],toArray mutableArray: inout [UIButton], inTableView tableView : UITableView,heightCallBack callBack: HeightCallBack? ) -> UITableViewCell {
+    func creatKeywordCubCellWithArray(keywordArray: [String],toArray mutableArray: inout [UIButton],isHot :Bool,inTableView tableView : UITableView,heightCallBack callBack: HeightCallBack? ) -> UITableViewCell {
         mutableArray.removeAll()
         var cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier)
         
@@ -243,9 +243,9 @@ extension SearchController {
             let attr = NSAttributedString.init(string: keywordArray[i], attributes: [NSAttributedStringKey.foregroundColor : UIColor.gray,NSAttributedStringKey.font : UIFont.systemFont(ofSize: 12)])
             btn.setAttributedTitle(attr, for: .normal)
             
-            if mutableArray == hotKeywordsBtnArray {
+            if isHot == true {
                 btn.addTarget(self, action: #selector(hotArrayBtnClick(btn:)), for: .touchUpInside)
-            }else if mutableArray == historyKeywordsBtnArray {
+            }else{
                 btn.addTarget(self, action: #selector(historyArrayBtnClick(btn:)), for: .touchUpInside)
             }
             //  设置btn宽度和高度
@@ -334,7 +334,8 @@ extension SearchController:UITableViewDataSource {
             if searching == true{
                 if result == true {
                     // 返回数组长度 + 1（提示添加标签）
-                    return self.resultArray.count + 1
+                    //return self.resultArray.count + 1
+                    return self.resultArray.count
                 }else{
                     // 没结果展示两行 - 第一行提示没结果，第二行提示添加标签
                     return 2
@@ -384,12 +385,12 @@ extension SearchController:UITableViewDataSource {
         //  没点搜索，展示默认推荐界面
         //  热门搜索
         if indexPath.section == 0 {
-            let cell = creatKeywordCubCellWithArray(keywordArray: hotKeywordsArray, toArray: &hotKeywordsBtnArray, inTableView: tableView, heightCallBack: nil)
+            let cell = creatKeywordCubCellWithArray(keywordArray: hotKeywordsArray, toArray: &hotKeywordsBtnArray, isHot: true, inTableView: tableView, heightCallBack: nil)
             
             return cell
         }
         //  历史搜索
-        let cell = creatKeywordCubCellWithArray(keywordArray: historyKeywordsArray, toArray: &historyKeywordsBtnArray, inTableView: tableView, heightCallBack: nil)
+        let cell = creatKeywordCubCellWithArray(keywordArray: historyKeywordsArray, toArray: &historyKeywordsBtnArray, isHot: false, inTableView: tableView, heightCallBack: nil)
         return cell
     }
     
@@ -400,14 +401,14 @@ extension SearchController:UITableViewDataSource {
         var cellHeight : CGFloat = 0
         // 热门搜索
         if indexPath.row == 0 {
-            let _ = creatKeywordCubCellWithArray(keywordArray: hotKeywordsArray, toArray: &hotKeywordsBtnArray, inTableView: tableView, heightCallBack: { (height) in
+            let _ = creatKeywordCubCellWithArray(keywordArray: hotKeywordsArray, toArray: &hotKeywordsBtnArray, isHot: true, inTableView: tableView, heightCallBack: { (height) in
                 cellHeight = height
             })
             return cellHeight + 20
         }
         
         // 历史搜索计算高度
-        let _ = creatKeywordCubCellWithArray(keywordArray: historyKeywordsArray, toArray: &historyKeywordsBtnArray, inTableView: tableView, heightCallBack: { (height) in
+        let _ = creatKeywordCubCellWithArray(keywordArray: historyKeywordsArray, toArray: &historyKeywordsBtnArray, isHot: false, inTableView: tableView, heightCallBack: { (height) in
             cellHeight = height
         })
         return cellHeight + 20
@@ -465,7 +466,7 @@ extension SearchController:UITableViewDelegate {
     }
 }
 
-
+// test
 extension Array where Element: Comparable {
     func containsSameElements(as other: [Element]) -> Bool {
         return self.count == other.count && self.sorted() == other.sorted()
